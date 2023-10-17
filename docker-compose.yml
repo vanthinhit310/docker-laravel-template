@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
       - redis
-      - mailhog
+      - mail
 
   ####################################################################################################
   # Nginx
@@ -43,7 +43,7 @@ services:
   # DATABASE (MySQL)
   ####################################################################################################
   #db:
-  #  container_name: laravel_mysql
+  #  container_name: db
   #  image: mysql:8.1
   #  ports:
   #    - 3306:3306
@@ -96,23 +96,34 @@ services:
   # ####################################################################################################
   # # Mailpit
   # ####################################################################################################
-  # mail:
-  #   container_name: laravel_mailpit
-  #   image: axllent/mailpit:latest
-  #   ports:
-  #     - 8025:8025
-  #     - 1025:1025
-  #   networks:
-  #     - laravel
+  mail:
+    container_name: mailserver
+    image: axllent/mailpit:latest
+    ports:
+      - 8025:8025
+      - 1025:1025
+    networks:
+      - laravel
 
   ####################################################################################################
   # Mailhog
   ####################################################################################################
-  mailhog:
-    container_name: mailserver
-    image: mailhog/mailhog:latest
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-    networks:
-      - laravel
+  # mail:
+  #   container_name: mailserver
+  #   image: mailhog/mailhog:latest
+  #   ports:
+  #     - "1025:1025"
+  #     - "8025:8025"
+  #   networks:
+  #     - laravel
+
+  ####################################################################################################
+  # supervisor
+  ####################################################################################################
+  # supervisor:
+  #   container_name: supervisor
+  #   build: .docker/supervisor
+  #   volumes:
+  #     - ./src:/workspace
+  #   networks:
+  #     - laravel
