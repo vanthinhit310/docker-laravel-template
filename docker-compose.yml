@@ -94,25 +94,6 @@ services:
       - laravel
 
   # ####################################################################################################
-  # # Redis UI
-  # ####################################################################################################
-  redis-commander:
-    container_name: redis_commander
-    image: rediscommander/redis-commander:latest
-    restart: unless-stopped
-    links:
-      - redis
-    depends_on:
-      - redis
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    ports:
-      - 6380:6380
-    networks:
-      - laravel
-
-  # ####################################################################################################
   # # Mailpit
   # ####################################################################################################
   mail:
