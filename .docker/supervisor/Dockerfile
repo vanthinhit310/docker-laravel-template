@@ -1,8 +1,12 @@
-FROM php:8.2-fpm
+FROM php:8.2-fpm-alpine
 
-ADD supervisord.conf /etc/
+RUN docker-php-ext-install pdo pdo_mysql \
+    && docker-php-ext-install bcmath \
+    && apk update \ 
+    && apk add --no-cache supervisor
 
-RUN apt-get update \ 
-    && apt-get install -y --no-install-recommends supervisor
+RUN mkdir -p /etc/supervisor/logs
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

@@ -94,6 +94,25 @@ services:
       - laravel
 
   # ####################################################################################################
+  # # Redis UI
+  # ####################################################################################################
+  redis-commander:
+    container_name: redis_commander
+    image: rediscommander/redis-commander:latest
+    restart: unless-stopped
+    links:
+      - redis
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - 6380:6380
+    networks:
+      - laravel
+
+  # ####################################################################################################
   # # Mailpit
   # ####################################################################################################
   mail:
@@ -120,10 +139,19 @@ services:
   ####################################################################################################
   # supervisor
   ####################################################################################################
-  # supervisor:
-  #   container_name: supervisor
-  #   build: .docker/supervisor
-  #   volumes:
-  #     - ./src:/workspace
-  #   networks:
-  #     - laravel
+  supervisor:
+    container_name: supervisor
+    build: .docker/supervisor
+    environment:
+      - SUPERVISOR_APP_ROOT=${SUPERVISOR_APP_ROOT}
+      - SUPERVISOR_QUEUE_DRIVER=${SUPERVISOR_QUEUE_DRIVER}
+      - SUPERVISOR_QUEUE_OPTIONS=${SUPERVISOR_QUEUE_OPTIONS}
+      - SUPERVISOR_USER=${SUPERVISOR_USER}
+      - SUPERVISOR_NUM_PROCS=${SUPERVISOR_NUM_PROCS}
+    depends_on:
+      - app
+      - redis
+    volumes:
+      - ./src:/workspace:delegated
+    networks:
+      - laravel
